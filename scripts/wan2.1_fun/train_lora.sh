@@ -1,4 +1,4 @@
-export MODEL_NAME="models/Diffusion_Transformer/Wan2.1-Fun-V1.1-14B-InP"
+export MODEL_NAME="/mnt/3d/pretrained_model/Wan2.1-1.3B"
 export DATASET_NAME="datasets/internal_datasets/"
 export DATASET_META_NAME="datasets/internal_datasets/metadata.json"
 # NCCL_IB_DISABLE=1 and NCCL_P2P_DISABLE=1 are used in multi nodes without RDMA. 
@@ -6,11 +6,9 @@ export DATASET_META_NAME="datasets/internal_datasets/metadata.json"
 # export NCCL_P2P_DISABLE=1
 NCCL_DEBUG=INFO
 
-accelerate launch --mixed_precision="bf16" scripts/wan2.1_fun/train_lora.py \
-  --config_path="config/wan2.1/wan_civitai.yaml" \
+accelerate launch --mixed_precision="bf16" /root/workspace/VideoX-Fun-main/scripts/wan2.1_fun/train_lora.py \
+  --config_path="/root/workspace/VideoX-Fun-main/config/wan2.1/wan_civitai.yaml" \
   --pretrained_model_name_or_path=$MODEL_NAME \
-  --train_data_dir=$DATASET_NAME \
-  --train_data_meta=$DATASET_META_NAME \
   --image_sample_size=1024 \
   --video_sample_size=256 \
   --token_sample_size=512 \
@@ -24,7 +22,7 @@ accelerate launch --mixed_precision="bf16" scripts/wan2.1_fun/train_lora.py \
   --checkpointing_steps=50 \
   --learning_rate=1e-04 \
   --seed=42 \
-  --output_dir="output_dir" \
+  --output_dir="editing_100sample" \
   --gradient_checkpointing \
   --mixed_precision="bf16" \
   --adam_weight_decay=3e-2 \
@@ -36,7 +34,9 @@ accelerate launch --mixed_precision="bf16" scripts/wan2.1_fun/train_lora.py \
   --enable_bucket \
   --uniform_sampling \
   --train_mode="inpaint" \
-  --low_vram 
+  --low_vram \
+  --syncam_datapath="/root/workspace/DiffSynth-Studio/syncammaster/SynCamVideo-Dataset" \
+  --steps_per_epoch=50
 
 # # Training command for T2V
 # export MODEL_NAME="models/Diffusion_Transformer/Wan2.1-Fun-V1.1-14B-InP"
